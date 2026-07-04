@@ -66,7 +66,7 @@ Doom Emacs — in `packages.el`:
 - **REPL integration** — start an inferior `sema` REPL and send the region, last sexp, or whole buffer to it.
 - **imenu** — navigate functions, variables, macros, agents, tools, and record types.
 - **Electric pairs** — auto-close `()`, `[]`, `{}`, and `""`.
-- **LSP hookup** — recipes below wire the mode to `sema lsp` via eglot or lsp-mode.
+- **LSP** — `sema-mode` registers `sema lsp` with **eglot** automatically (`M-x eglot`); an lsp-mode recipe is below.
 
 ## Requirements
 
@@ -95,13 +95,12 @@ diagnostics, document symbols, and code lens (run expressions).
 
 ### eglot (built-in since Emacs 29)
 
-```elisp
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               '(sema-mode . ("sema" "lsp"))))
-```
+`sema-mode` **registers the server with eglot automatically** — just run `M-x eglot`
+in a `.sema` buffer. For automatic startup, add:
 
-Then run `M-x eglot` in a `.sema` buffer.
+```elisp
+(add-hook 'sema-mode-hook #'eglot-ensure)
+```
 
 ### lsp-mode
 

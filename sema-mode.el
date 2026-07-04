@@ -395,6 +395,16 @@ See https://sema-lang.com for documentation.
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.sema\\'" . sema-mode))
 
+;; ── LSP via eglot ─────────────────────────────────────────────────────────
+;; Register Sema's language server (`sema lsp') with eglot so `M-x eglot' in a
+;; Sema buffer starts it.  Guarded with `with-eval-after-load' so eglot remains
+;; an optional dependency.  For automatic startup, add to your config:
+;;
+;;   (add-hook 'sema-mode-hook #'eglot-ensure)
+(defvar eglot-server-programs)
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs '(sema-mode . ("sema" "lsp"))))
+
 (provide 'sema-mode)
 
 ;;; sema-mode.el ends here
