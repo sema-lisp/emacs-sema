@@ -1,6 +1,16 @@
-# sema-mode
+<div align="center">
 
-Emacs major mode for [Sema](https://sema-lang.com) — a Lisp dialect with first-class LLM primitives.
+<img src="https://sema-lang.com/logo.svg" alt="Sema" height="64">
+
+# Sema for Emacs
+
+**[Sema](https://sema-lang.com) major mode for [Emacs](https://www.gnu.org/software/emacs/)** — a Lisp with first-class LLM primitives.
+
+[![CI](https://img.shields.io/github/actions/workflow/status/sema-lisp/emacs-sema/ci.yml?branch=main&label=CI&logo=github)](https://github.com/sema-lisp/emacs-sema/actions)
+[![License](https://img.shields.io/github/license/sema-lisp/emacs-sema?color=c8a855)](LICENSE)
+[![Website](https://img.shields.io/badge/website-sema--lang.com-c8a855)](https://sema-lang.com)
+
+</div>
 
 Syntax highlighting, Lisp-aware indentation, and an interactive REPL for editing `.sema` files, with optional LSP support.
 
@@ -123,11 +133,12 @@ emacs -Q --batch --eval '(checkdoc-file "sema-mode.el")'
 
 ## Links
 
-- **Homepage** — [sema-lang.com](https://sema-lang.com)
+- **Website** — [sema-lang.com](https://sema-lang.com)
 - **Playground** — [sema.run](https://sema.run)
-- **Sema language** — [github.com/HelgeSverre/sema](https://github.com/HelgeSverre/sema)
-- **This mode** — [github.com/sema-lisp/emacs-sema](https://github.com/sema-lisp/emacs-sema)
+- **Documentation** — [sema-lang.com/docs](https://sema-lang.com/docs/)
+- **Grammar** — [tree-sitter-sema](https://github.com/sema-lisp/tree-sitter-sema)
+- **Repository** — [sema-lisp/emacs-sema](https://github.com/sema-lisp/emacs-sema)
 
 ## License
 
-MIT © Helge Sverre
+[MIT](LICENSE) © [Helge Sverre](https://github.com/HelgeSverre)
