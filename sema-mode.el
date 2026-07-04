@@ -17,18 +17,17 @@
 
 ;; A major mode for editing Sema (.sema) files — a Lisp dialect with
 ;; first-class LLM primitives.  Provides syntax highlighting, indentation,
-;; and REPL integration.
+;; and REPL integration, plus LSP hookup via eglot or lsp-mode (`sema lsp').
 ;;
-;; Install:
-;;   (add-to-list 'load-path "/path/to/sema/editors/emacs")
+;; Install from MELPA:
+;;   M-x package-install RET sema-mode
+;;
+;; Or from source:
+;;   (add-to-list 'load-path "/path/to/emacs-sema")
 ;;   (require 'sema-mode)
 ;;
-;; Or with use-package:
-;;   (use-package sema-mode
-;;     :load-path "/path/to/sema/editors/emacs"
-;;     :mode "\\.sema\\'")
-;;
 ;; Homepage: https://sema-lang.com
+;; Source:   https://github.com/sema-lisp/emacs-sema
 
 ;;; Code:
 
@@ -302,7 +301,8 @@
 
 (defun sema--indent-function (indent-point state)
   "Sema-specific indentation function.
-Falls back to `lisp-indent-function' after checking Sema-specific forms."
+INDENT-POINT and STATE are as for the function `lisp-indent-function',
+which this function falls back to after checking Sema-specific forms."
   (let* ((normal-indent (current-column))
          (containing-sexp (nth 1 state)))
     (when containing-sexp

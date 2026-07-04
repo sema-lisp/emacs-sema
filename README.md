@@ -1,30 +1,23 @@
-# sema-mode.el — Emacs Major Mode for Sema
+# sema-mode
 
-An Emacs major mode for editing [Sema](https://sema-lang.com) (`.sema`) files.
+Emacs major mode for [Sema](https://sema-lang.com) — a Lisp dialect with first-class LLM primitives.
 
-- **Homepage**: [sema-lang.com](https://sema-lang.com)
-- **Source**: [github.com/sema-lisp/emacs-sema](https://github.com/sema-lisp/emacs-sema)
-- **Author**: Helge Sverre
+Syntax highlighting, Lisp-aware indentation, and an interactive REPL for editing `.sema` files, with optional LSP support.
 
-## Features
-
-- **Syntax highlighting** — special forms, builtins, keyword literals (`:foo`), booleans (`#t`/`#f`), numbers, strings, comments
-- **Smart indentation** — Lisp-aware indentation with Sema-specific form rules
-- **REPL integration** — start a Sema REPL and send code to it interactively
-- **Electric pairs** — auto-close `()`, `[]`, `{}`, `""`
-
-## Installation
+## Install
 
 ### MELPA
 
-Once the recipe is merged into [MELPA](https://melpa.org), install with the
-built-in package manager:
+> The MELPA recipe (`melpa-recipe`) is pending acceptance. Until it lands, use the from-source install below.
+
+Once available on [MELPA](https://melpa.org):
 
 ```elisp
-(package-install 'sema-mode)     ;; M-x package-install RET sema-mode
+;; M-x package-install RET sema-mode
+(package-install 'sema-mode)
 ```
 
-or with `use-package`:
+With `use-package`:
 
 ```elisp
 (use-package sema-mode
@@ -32,44 +25,47 @@ or with `use-package`:
   :mode "\\.sema\\'")
 ```
 
-> **Maintainer note — submitting to MELPA:** the ready-to-submit recipe lives at
-> [`editors/emacs/melpa-recipe`](./melpa-recipe). To publish, open a PR against
-> [melpa/melpa](https://github.com/melpa/melpa) adding it as `recipes/sema-mode`.
-> Before submitting, lint locally:
->
-> ```bash
-> emacs -Q --batch -l package-lint -f package-lint-batch-and-exit editors/emacs/sema-mode.el
-> emacs -Q --batch --eval '(checkdoc-file "editors/emacs/sema-mode.el")'
-> ```
+### From source
 
-### Manual
+Clone the repo and add it to your `load-path`:
 
 ```elisp
-(add-to-list 'load-path "/path/to/sema/editors/emacs")
+(add-to-list 'load-path "/path/to/emacs-sema")
 (require 'sema-mode)
 ```
 
-### use-package
+Or, on Emacs 29+, install straight from GitHub with `use-package :vc`:
 
 ```elisp
 (use-package sema-mode
-  :load-path "/path/to/sema/editors/emacs"
+  :vc (:url "https://github.com/sema-lisp/emacs-sema" :rev :newest)
   :mode "\\.sema\\'")
 ```
 
-### Doom Emacs
-
-In `packages.el`:
+Doom Emacs — in `packages.el`:
 
 ```elisp
-(package! sema-mode :recipe (:local-repo "/path/to/sema/editors/emacs"))
+(package! sema-mode
+  :recipe (:host github :repo "sema-lisp/emacs-sema"))
 ```
 
-In `config.el`:
+## Features
 
-```elisp
-(use-package! sema-mode :mode "\\.sema\\'")
-```
+- **Syntax highlighting** — special forms, standard-library builtins (including the `llm/*`, `agent/*`, `conversation/*`, and `tool/*` primitives), keyword literals (`:foo`), booleans (`#t`/`#f`/`true`/`false`), `nil`, character literals, numbers, strings, and `;` / `#| ... |#` comments.
+- **Lisp-aware indentation** — Sema-specific indent rules layered over `lisp-mode` indentation.
+- **REPL integration** — start an inferior `sema` REPL and send the region, last sexp, or whole buffer to it.
+- **imenu** — navigate functions, variables, macros, agents, tools, and record types.
+- **Electric pairs** — auto-close `()`, `[]`, `{}`, and `""`.
+- **LSP hookup** — recipes below wire the mode to `sema lsp` via eglot or lsp-mode.
+
+## Requirements
+
+- **Emacs 25.1 or newer.**
+- **The `sema` binary** on your `PATH` for the REPL, `sema-run-file`, and LSP. Install it from the [Sema project](https://github.com/HelgeSverre/sema) (`cargo install sema`). Point `sema-program` at a non-default location if needed:
+
+  ```elisp
+  (setq sema-program "/path/to/sema")
+  ```
 
 ## Key Bindings
 
@@ -81,18 +77,11 @@ In `config.el`:
 | `C-c C-b` | `sema-send-buffer`    | Send entire buffer to REPL       |
 | `C-c C-l` | `sema-run-file`       | Run current file with `sema`     |
 
-## Configuration
-
-```elisp
-;; Path to the sema binary (default: "sema")
-(setq sema-program "/path/to/sema")
-```
-
 ## LSP Support
 
-Sema ships with a built-in language server. Run it with `sema lsp`.
-
-**Available features:** completions, hover docs, go-to-definition, find references, rename, signature help, diagnostics, document symbols, and code lens (run expressions).
+Sema ships with a built-in language server (`sema lsp`) providing completions,
+hover docs, go-to-definition, find references, rename, signature help,
+diagnostics, document symbols, and code lens (run expressions).
 
 ### eglot (built-in since Emacs 29)
 
@@ -102,7 +91,7 @@ Sema ships with a built-in language server. Run it with `sema lsp`.
                '(sema-mode . ("sema" "lsp"))))
 ```
 
-Then run `M-x eglot` in a `.sema` buffer to start the server.
+Then run `M-x eglot` in a `.sema` buffer.
 
 ### lsp-mode
 
@@ -116,6 +105,29 @@ Then run `M-x eglot` in a `.sema` buffer to start the server.
     :server-id 'sema-lsp)))
 ```
 
-### Inline Results (Advanced)
+> The Sema LSP server also emits a custom `sema/evalResult` notification for
+> inline evaluation results, which requires a custom client handler — see the
+> Sema documentation for details.
 
-The Sema LSP server emits a custom `sema/evalResult` notification for displaying inline evaluation results. This requires a custom handler in your client — see the Sema documentation for details.
+## Submitting to MELPA (maintainer note)
+
+The ready-to-submit recipe lives in [`melpa-recipe`](./melpa-recipe). To publish,
+open a PR against [melpa/melpa](https://github.com/melpa/melpa) adding it as
+`recipes/sema-mode`. Lint locally first:
+
+```bash
+emacs -Q --batch -f batch-byte-compile sema-mode.el
+emacs -Q --batch -l package-lint -f package-lint-batch-and-exit sema-mode.el
+emacs -Q --batch --eval '(checkdoc-file "sema-mode.el")'
+```
+
+## Links
+
+- **Homepage** — [sema-lang.com](https://sema-lang.com)
+- **Playground** — [sema.run](https://sema.run)
+- **Sema language** — [github.com/HelgeSverre/sema](https://github.com/HelgeSverre/sema)
+- **This mode** — [github.com/sema-lisp/emacs-sema](https://github.com/sema-lisp/emacs-sema)
+
+## License
+
+MIT © Helge Sverre

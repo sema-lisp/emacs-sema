@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        emacs_version:
+          - "25.1"
+          - "29.4"
+          - "snapshot"
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Emacs ${{ matrix.emacs_version }}
+        uses: purcell/setup-emacs@master
+        with:
+          version: ${{ matrix.emacs_version }}
+
+      - name: Byte-compile (warnings as errors)
+        run: |
+          emacs -Q --batch \
+            --eval '(setq byte-compile-error-on-warn t)' \
+            -f batch-byte-compile sema-mode.el
+
+      - name: checkdoc
+        run: emacs -Q --batch --eval '(checkdoc-file "sema-mode.el")'
