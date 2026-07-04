@@ -1,0 +1,4 @@
+(sema-mode
+ :fetcher github
+ :repo "HelgeSverre/sema"
+ :files ("editors/emacs/*.el"))

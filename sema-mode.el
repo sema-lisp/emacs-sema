@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2025-2026 Helge Sverre
 
-;; Author: Helge Sverre
-;; URL: https://github.com/helgesverre/sema
+;; Author: Helge Sverre <helge.sverre@gmail.com>
+;; URL: https://github.com/HelgeSverre/sema
 ;; Homepage: https://sema-lang.com
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "25.1"))

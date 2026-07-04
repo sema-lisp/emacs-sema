@@ -3,7 +3,7 @@
 An Emacs major mode for editing [Sema](https://sema-lang.com) (`.sema`) files.
 
 - **Homepage**: [sema-lang.com](https://sema-lang.com)
-- **Source**: [github.com/helgesverre/sema](https://github.com/helgesverre/sema)
+- **Source**: [github.com/HelgeSverre/sema](https://github.com/HelgeSverre/sema)
 - **Author**: Helge Sverre
 
 ## Features
@@ -14,6 +14,33 @@ An Emacs major mode for editing [Sema](https://sema-lang.com) (`.sema`) files.
 - **Electric pairs** — auto-close `()`, `[]`, `{}`, `""`
 
 ## Installation
+
+### MELPA
+
+Once the recipe is merged into [MELPA](https://melpa.org), install with the
+built-in package manager:
+
+```elisp
+(package-install 'sema-mode)     ;; M-x package-install RET sema-mode
+```
+
+or with `use-package`:
+
+```elisp
+(use-package sema-mode
+  :ensure t
+  :mode "\\.sema\\'")
+```
+
+> **Maintainer note — submitting to MELPA:** the ready-to-submit recipe lives at
+> [`editors/emacs/melpa-recipe`](./melpa-recipe). To publish, open a PR against
+> [melpa/melpa](https://github.com/melpa/melpa) adding it as `recipes/sema-mode`.
+> Before submitting, lint locally:
+>
+> ```bash
+> emacs -Q --batch -l package-lint -f package-lint-batch-and-exit editors/emacs/sema-mode.el
+> emacs -Q --batch --eval '(checkdoc-file "editors/emacs/sema-mode.el")'
+> ```
 
 ### Manual
 
