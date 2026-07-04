@@ -362,6 +362,11 @@ which this function falls back to after checking Sema-specific forms."
 
 ;; ── Major mode definition ──────────────────────────────────────────────
 
+;; Declared for the byte-compiler: the mode sets this buffer-locally so
+;; electric-pair-mode pairs Sema brackets, but `elec-pair' may not be loaded
+;; at compile time (Emacs < 29 under `emacs -Q').
+(defvar electric-pair-pairs)
+
 ;;;###autoload
 (define-derived-mode sema-mode prog-mode "Sema"
   "Major mode for editing Sema files.
