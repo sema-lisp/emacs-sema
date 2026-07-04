@@ -3,7 +3,7 @@
 An Emacs major mode for editing [Sema](https://sema-lang.com) (`.sema`) files.
 
 - **Homepage**: [sema-lang.com](https://sema-lang.com)
-- **Source**: [github.com/HelgeSverre/sema](https://github.com/HelgeSverre/sema)
+- **Source**: [github.com/sema-lisp/emacs-sema](https://github.com/sema-lisp/emacs-sema)
 - **Author**: Helge Sverre
 
 ## Features
