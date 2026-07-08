@@ -32,3 +32,20 @@ jobs:
 
       - name: checkdoc
         run: emacs -Q --batch --eval '(checkdoc-file "sema-mode.el")'
+
+  package-lint:
+    name: package-lint (MELPA)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Emacs
+        uses: purcell/setup-emacs@master
+        with:
+          version: "29.4"
+
+      # Runs the MELPA linter. Fails only on errors; warnings are printed
+      # but tolerated (see .github/lint.el). This is the check that would
+      # have caught the earlier prefix error before MELPA review did.
+      - name: package-lint
+        run: emacs -Q --batch -l .github/lint.el sema-mode.el
