@@ -288,16 +288,15 @@
 
 ;; ── Indentation ────────────────────────────────────────────────────────
 
-(defvar sema--indent-forms
-  '((define . 1) (defun . 1) (lambda . 1) (fn . 1)
-    (let . 1) (let* . 1) (letrec . 1)
-    (defmacro . 1) (defagent . 1) (deftool . 1) (define-record-type . 1)
-    (when . 1) (unless . 1) (with-budget . 1) (module . 1)
-    (set! . 1) (import . 1) (delay . 1) (throw . 1)
-    (prompt . 1) (message . 1)
-    (if . 1) (case . 1) (try . 1)
-    (do . 0) (begin . 0) (cond . 0))
-  "Alist of Sema forms and their indent levels.")
+(defvar sema--indent-1-forms
+  '(let let* letrec if case try when unless with-budget module
+    set! import delay throw prompt message
+    define defun lambda fn defmacro defagent deftool define-record-type)
+  "Sema forms with one distinguished argument (indent method 1).")
+
+(defvar sema--indent-0-forms
+  '(do begin cond)
+  "Sema forms with no distinguished argument (indent method 0).")
 
 (defun sema--indent-function (indent-point state)
   "Sema-specific indentation function.
@@ -309,7 +308,8 @@ which this function falls back to after checking Sema-specific forms."
       (goto-char (1+ containing-sexp))
       (when (looking-at "\\(?:\\sw\\|\\s_\\)+")
         (let* ((sym (intern-soft (match-string 0)))
-               (indent (cdr (assq sym sema--indent-forms))))
+               (indent (cond ((memq sym sema--indent-1-forms) 1)
+                             ((memq sym sema--indent-0-forms) 0))))
           (when indent
             (lisp-indent-specform indent state indent-point normal-indent)))))))
 
