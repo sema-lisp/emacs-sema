@@ -3,6 +3,7 @@
 ;; Copyright (C) 2025-2026 Helge Sverre
 
 ;; Author: Helge Sverre <helge.sverre@gmail.com>
+;; Assisted-by: Claude:claude-opus-4-8
 ;; URL: https://github.com/sema-lisp/emacs-sema
 ;; Homepage: https://sema-lang.com
 ;; Version: 0.1.0
@@ -25,6 +26,15 @@
 ;; Or from source:
 ;;   (add-to-list 'load-path "/path/to/emacs-sema")
 ;;   (require 'sema-mode)
+;;
+;; If you use eglot, register Sema's language server (`sema lsp') so that
+;; `M-x eglot' starts it in Sema buffers:
+;;
+;;   (with-eval-after-load 'eglot #'sema-register-with-eglot)
+;;
+;; For automatic startup, also add `eglot-ensure' to the mode hook:
+;;
+;;   (add-hook 'sema-mode-hook #'eglot-ensure)
 ;;
 ;; Homepage: https://sema-lang.com
 ;; Source:   https://github.com/sema-lisp/emacs-sema
@@ -401,13 +411,18 @@ See https://sema-lang.com for documentation.
 (add-to-list 'auto-mode-alist '("\\.sema\\'" . sema-mode))
 
 ;; ── LSP via eglot ─────────────────────────────────────────────────────────
-;; Register Sema's language server (`sema lsp') with eglot so `M-x eglot' in a
-;; Sema buffer starts it.  Guarded with `with-eval-after-load' so eglot remains
-;; an optional dependency.  For automatic startup, add to your config:
-;;
-;;   (add-hook 'sema-mode-hook #'eglot-ensure)
+
 (defvar eglot-server-programs)
-(with-eval-after-load 'eglot
+
+;;;###autoload
+(defun sema-register-with-eglot ()
+  "Register Sema's language server (`sema lsp') with eglot.
+After calling this, `M-x eglot' in a Sema buffer starts the server.
+Add it to your configuration so registration stays explicit:
+
+  (with-eval-after-load \\='eglot #\\='sema-register-with-eglot)
+
+For automatic startup, also add `eglot-ensure' to `sema-mode-hook'."
   (add-to-list 'eglot-server-programs '(sema-mode . ("sema" "lsp"))))
 
 (provide 'sema-mode)
