@@ -99,8 +99,10 @@
 ;; ── Font-lock (syntax highlighting) ────────────────────────────────────
 
 (defvar sema-special-forms
-  '("define" "defun" "lambda" "fn" "if" "cond" "case" "when" "unless"
-    "let" "let*" "letrec" "begin" "do" "and" "or"
+  '("define" "def" "defun" "defn" "lambda" "fn" "if" "cond" "case" "when" "unless"
+    "let" "let*" "letrec" "begin" "progn" "do" "while" "and" "or"
+    "let-values" "let*-values" "define-values" "define-syntax"
+    "match" "match*" "defmulti" "defmethod" "async" "await"
     "set!" "quote" "quasiquote" "unquote" "unquote-splicing"
     "define-record-type" "defmacro" "defagent" "deftool"
     "try" "catch" "throw"
@@ -276,8 +278,9 @@
       ("\\_<nil\\_>" . font-lock-constant-face)
       ;; Numeric literals
       ("\\_<-?[0-9]+\\(?:\\.[0-9]+\\)?\\_>" . font-lock-constant-face)
-      ;; define/defun name
-      ("(\\(?:define\\|defun\\)\\s-+(?\\(\\(?:\\sw\\|\\s_\\)+\\)"
+      ;; define/defun name (and their aliases def/defn — longest first so
+      ;; "define" is not shadowed by the "def" branch)
+      ("(\\(?:define\\|defun\\|defn\\|def\\)\\s-+(?\\(\\(?:\\sw\\|\\s_\\)+\\)"
        1 font-lock-function-name-face)
       ;; defmacro name
       ("(defmacro\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)"
@@ -299,9 +302,11 @@
 ;; ── Indentation ────────────────────────────────────────────────────────
 
 (defvar sema--indent-1-forms
-  '(let let* letrec if case try when unless with-budget module
-    set! import delay throw prompt message
-    define defun lambda fn defmacro defagent deftool define-record-type)
+  '(let let* letrec if case try when unless while with-budget module
+    set! import delay throw prompt message match match*
+    let-values let*-values define-values define-syntax
+    define def defun defn lambda fn defmacro defmulti defmethod
+    defagent deftool define-record-type)
   "Sema forms with one distinguished argument (indent method 1).")
 
 (defvar sema--indent-0-forms
@@ -400,8 +405,11 @@ See https://sema-lang.com for documentation.
                                      (?\" . ?\")))
   (setq-local imenu-generic-expression
               '(("Functions" "^\\s-*(defun\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
+                ("Functions" "^\\s-*(defn\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
                 ("Functions" "^\\s-*(define\\s-+(\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
+                ("Functions" "^\\s-*(def\\s-+(\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
                 ("Variables" "^\\s-*(define\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
+                ("Variables" "^\\s-*(def\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
                 ("Macros" "^\\s-*(defmacro\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
                 ("Agents" "^\\s-*(defagent\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
                 ("Tools" "^\\s-*(deftool\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
