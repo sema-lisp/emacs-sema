@@ -317,7 +317,7 @@
     set! import delay throw prompt message match match*
     let-values let*-values define-values define-syntax
     define def defun defn lambda fn defmacro defmulti defmethod
-    defagent deftool defworkflow defpolicy define-record-type)
+    defagent deftool defworkflow defpolicy policy/without define-record-type)
   "Sema forms with one distinguished argument (indent method 1).")
 
 (defvar sema--indent-0-forms
