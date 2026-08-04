@@ -104,7 +104,7 @@
     "let-values" "let*-values" "define-values" "define-syntax"
     "match" "match*" "defmulti" "defmethod" "async" "await"
     "set!" "quote" "quasiquote" "unquote" "unquote-splicing"
-    "define-record-type" "defmacro" "defagent" "deftool"
+    "define-record-type" "defmacro" "defagent" "deftool" "defworkflow" "defpolicy"
     "try" "catch" "throw"
     "import" "module" "export" "load"
     "delay" "force" "eval" "macroexpand" "with-budget"
@@ -137,7 +137,7 @@
     "embedding/->list" "embedding/length"
     "embedding/list->embedding" "embedding/ref"
     ;; Tool query functions
-    "tool/name" "tool/description" "tool/parameters"
+    "tool/name" "tool/description" "tool/parameters" "tool/policy-subjects"
     ;; I/O
     "display" "print" "println" "newline" "format"
     "read" "read-line" "read-many"
@@ -252,6 +252,14 @@
     "sys/arch" "sys/elapsed" "sys/home-dir" "sys/hostname"
     "sys/interactive?" "sys/os" "sys/pid" "sys/temp-dir"
     "sys/tty" "sys/user" "sys/which"
+    ;; Workflow and policy forms
+    "approval" "checkpoint" "parallel" "parallel-settled" "phase"
+    "pipeline" "pipeline-settled" "policy/without" "settled-partition"
+    "settled/err?" "settled/ok?" "step"
+    "workflow/approval" "workflow/check" "workflow/checkpoint"
+    "workflow/phase" "workflow/policy-without" "workflow/run"
+    "workflow/run-form" "workflow/step" "workflow/tool-call"
+    "workflow/tool-result"
     ;; Meta
     "gensym")
   "Sema built-in standard library functions.")
@@ -291,6 +299,9 @@
       ;; deftool name
       ("(deftool\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)"
        1 font-lock-function-name-face)
+      ;; workflow and policy names
+      ("(\\(?:defworkflow\\|defpolicy\\)\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)"
+       1 font-lock-function-name-face)
       ;; define-record-type name
       ("(define-record-type\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)"
        1 font-lock-type-face)
@@ -306,7 +317,7 @@
     set! import delay throw prompt message match match*
     let-values let*-values define-values define-syntax
     define def defun defn lambda fn defmacro defmulti defmethod
-    defagent deftool define-record-type)
+    defagent deftool defworkflow defpolicy policy/without define-record-type)
   "Sema forms with one distinguished argument (indent method 1).")
 
 (defvar sema--indent-0-forms
@@ -413,6 +424,8 @@ See https://sema-lang.com for documentation.
                 ("Macros" "^\\s-*(defmacro\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
                 ("Agents" "^\\s-*(defagent\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
                 ("Tools" "^\\s-*(deftool\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
+                ("Workflows" "^\\s-*(defworkflow\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
+                ("Policies" "^\\s-*(defpolicy\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)" 1)
                 ("Records" "^\\s-*(define-record-type\\s-+\\(\\(?:\\sw\\|\\s_\\)+\\)" 1))))
 
 ;;;###autoload
