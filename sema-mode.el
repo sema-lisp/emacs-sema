@@ -6,7 +6,7 @@
 ;; Assisted-by: Claude:claude-opus-4-8
 ;; URL: https://github.com/sema-lisp/emacs-sema
 ;; Homepage: https://sema-lang.com
-;; Version: 0.1.0
+;; Version: 0.2.0
 ;; Package-Requires: ((emacs "25.1"))
 ;; Keywords: languages, lisp
 
