@@ -52,6 +52,11 @@
   :type 'string
   :group 'sema)
 
+(defface sema-regex-face
+  '((t :inherit font-lock-string-face))
+  "Face for Sema regex literals."
+  :group 'sema)
+
 ;; ── Syntax table ───────────────────────────────────────────────────────
 
 (defvar sema-mode-syntax-table
@@ -98,6 +103,10 @@
   "Syntax table for `sema-mode'.")
 
 ;; ── Font-lock (syntax highlighting) ────────────────────────────────────
+
+(defconst sema--regex-literal-re
+  (rx "#\"" (* (or (seq "\\" nonl) (not (any "\"\\")))) "\"")
+  "Regular expression that matches one complete Sema regex literal.")
 
 (defvar sema-special-forms
   '("define" "def" "defun" "defn" "lambda" "fn" "if" "cond" "case" "when" "unless"
@@ -271,7 +280,10 @@
          (concat "(" (regexp-opt sema-special-forms 'symbols)))
         (builtins-re
          (concat "(" (regexp-opt sema-builtin-functions 'symbols))))
-    `(;; Special forms — after opening paren
+    `(;; Regex literals — override the ordinary string syntax face so the
+      ;; leading # and the complete raw literal receive one dedicated face.
+      (,sema--regex-literal-re 0 'sema-regex-face t)
+      ;; Special forms — after opening paren
       (,special-forms-re 1 font-lock-keyword-face)
       ;; Builtin functions — after opening paren
       (,builtins-re 1 font-lock-builtin-face)
