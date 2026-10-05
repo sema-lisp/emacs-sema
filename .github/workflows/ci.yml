@@ -33,6 +33,9 @@ jobs:
       - name: checkdoc
         run: emacs -Q --batch --eval '(checkdoc-file "sema-mode.el")'
 
+      - name: Tests
+        run: emacs -Q --batch -L . -L tests -l tests/sema-mode-test.el -f ert-run-tests-batch-and-exit
+
   package-lint:
     name: package-lint (MELPA)
     runs-on: ubuntu-latest

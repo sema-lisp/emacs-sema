@@ -95,8 +95,9 @@ diagnostics, document symbols, and code lens (run expressions).
 
 ### eglot (built-in since Emacs 29)
 
-`sema-mode` **registers the server with eglot automatically** — just run `M-x eglot`
-in a `.sema` buffer. For automatic startup, add:
+`sema-mode` **registers the server with eglot automatically** and uses the
+current value of `sema-program` — just run `M-x eglot` in a `.sema` buffer.
+For automatic startup, add:
 
 ```elisp
 (add-hook 'sema-mode-hook #'eglot-ensure)
