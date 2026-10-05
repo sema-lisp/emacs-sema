@@ -105,7 +105,7 @@
 ;; ── Font-lock (syntax highlighting) ────────────────────────────────────
 
 (defconst sema--regex-literal-re
-  (rx "#\"" (* (or (seq "\\" nonl) (not (any "\"\\")))) "\"")
+  (rx "#\"" (* (or (seq "\\" nonl) (not (in "\"\\")))) "\"")
   "Regular expression that matches one complete Sema regex literal.")
 
 (defvar sema-special-forms
