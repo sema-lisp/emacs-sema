@@ -92,9 +92,7 @@
     (modify-syntax-entry ?~ "_" table)
     (modify-syntax-entry ?. "_" table)
     (modify-syntax-entry ?: "_" table)
-    ;; Block comments: #| ... |#
-    (modify-syntax-entry ?# "_ 14b" table)
-    (modify-syntax-entry ?| "_ 23b" table)
+    (modify-syntax-entry ?# "_" table)
     ;; Quote-like prefixes for proper sexp handling
     (modify-syntax-entry ?' "'" table)
     (modify-syntax-entry ?` "'" table)
@@ -121,6 +119,8 @@
     "guard" "when-let" "if-let" "with-stream" "with-open"
     "with-span" "with-session" "with-retry"
     "io/with-raw-mode" "term/with-alt-screen" "term/with-mouse"
+    "term/with-bracketed-paste" "term/with-focus-events" "term/with-kitty-keys"
+    "parameterize" "dotimes" "for-range"
     "llm/with-budget"
     "prompt" "message"
     "else")
@@ -290,7 +290,7 @@
       ;; Keyword literals :foo
       ("\\_<:\\(?:\\sw\\|\\s_\\)+" . font-lock-constant-face)
       ;; Boolean literals
-      ("\\_<#[tf]\\_>" . font-lock-constant-face)
+      ("\\_<#\\(?:true\\|false\\|[tf]\\)\\_>" . font-lock-constant-face)
       ("\\_<\\(?:true\\|false\\)\\_>" . font-lock-constant-face)
       ;; Character literals #\space #\a etc.
       ("\\_<#\\\\\\(?:space\\|newline\\|tab\\|return\\|nul\\|alarm\\|backspace\\|delete\\|escape\\)\\_>"
@@ -331,16 +331,22 @@
     set! import delay throw prompt message match match*
     let-values let*-values define-values define-syntax
     define def defun defn lambda fn defmacro defmulti defmethod
-    defagent deftool defworkflow defpolicy policy/without define-record-type
-    guard when-let if-let with-stream with-open with-retry llm/with-budget)
+    defagent deftool defpolicy policy/without define-record-type
+    guard when-let if-let with-stream with-open with-retry llm/with-budget
+    parameterize dotimes for-range)
   "Sema forms with one distinguished argument (indent method 1).")
 
 (defvar sema--indent-2-forms
   '(with-span with-session)
   "Sema forms with two distinguished arguments (indent method 2).")
 
+(defvar sema--indent-3-forms
+  '(defworkflow)
+  "Sema forms with three distinguished arguments (indent method 3).")
+
 (defvar sema--indent-0-forms
-  '(do begin cond io/with-raw-mode term/with-alt-screen term/with-mouse)
+  '(do begin cond io/with-raw-mode term/with-alt-screen term/with-mouse
+    term/with-bracketed-paste term/with-focus-events term/with-kitty-keys)
   "Sema forms with no distinguished argument (indent method 0).")
 
 (defun sema--indent-function (indent-point state)
@@ -355,6 +361,7 @@ which this function falls back to after checking Sema-specific forms."
         (let* ((sym (intern-soft (match-string 0)))
                (indent (cond ((memq sym sema--indent-1-forms) 1)
                              ((memq sym sema--indent-2-forms) 2)
+                             ((memq sym sema--indent-3-forms) 3)
                              ((memq sym sema--indent-0-forms) 0))))
           (when indent
             (lisp-indent-specform indent state indent-point normal-indent)))))))
