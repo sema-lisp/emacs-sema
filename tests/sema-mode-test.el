@@ -82,4 +82,48 @@
                 'font-lock-builtin-face))))
 
 (provide 'sema-mode-test)
+
+(ert-deftest sema-recognizes-complete-hash-booleans ()
+  (with-temp-buffer
+    (sema-mode)
+    (insert "(list #t #f #true #false #truex)")
+    (font-lock-ensure)
+    (dolist (literal '("#t" "#f" "#true" "#false"))
+      (goto-char (point-min))
+      (search-forward (concat literal " "))
+      (should (eq (get-text-property (- (point) 2) 'face)
+                  'font-lock-constant-face)))
+    (goto-char (point-min))
+    (search-forward "#truex")
+    (should-not (eq (get-text-property (1- (point)) 'face)
+                    'font-lock-constant-face))))
+
+(ert-deftest sema-does-not-hide-unsupported-block-comments ()
+  (with-temp-buffer
+    (sema-mode)
+    (insert "#| unsupported |#")
+    (should-not (nth 4 (syntax-ppss 5)))))
+
+(ert-deftest sema-workflow-has-three-distinguished-arguments ()
+  (with-temp-buffer
+    (sema-mode)
+    (insert "(defworkflow name\n\"doc\"\n{}\n(foo))")
+    (indent-region (point-min) (point-max))
+    (should (equal (buffer-string)
+                   "(defworkflow name\n    \"doc\"\n    {}\n  (foo))"))))
+
+(ert-deftest sema-indents-terminal-and-binding-macro-bodies ()
+  (dolist (form '("term/with-bracketed-paste" "term/with-focus-events"
+                  "term/with-kitty-keys"))
+    (with-temp-buffer
+      (sema-mode)
+      (insert "(" form "\n(foo)\n(bar))")
+      (indent-region (point-min) (point-max))
+      (should (equal (buffer-string) (concat "(" form "\n  (foo)\n  (bar))")))))
+  (dolist (form '("parameterize" "dotimes" "for-range"))
+    (with-temp-buffer
+      (sema-mode)
+      (insert "(" form " (x 1)\n(foo))")
+      (indent-region (point-min) (point-max))
+      (should (equal (buffer-string) (concat "(" form " (x 1)\n  (foo))"))))))
 ;;; sema-mode-test.el ends here
